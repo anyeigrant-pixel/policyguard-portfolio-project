@@ -40,6 +40,18 @@ The application entry point is `app/streamlit_app.py`; Streamlit Cloud should de
 
 To deploy from a browser, select the repository, branch `main`, and the entry point above in the Streamlit Community Cloud deployment form. Do not configure secrets. The deployed app will be publicly accessible after its first synthetic-artifact bootstrap completes.
 
+## Static portfolio site and GitHub Pages
+
+The dependency-free public portfolio landing page is `index.html`, with local styling in `assets/styles.css`. It presents validated synthetic-model highlights, capability summaries, architecture, responsible-use constraints, a GitHub source link, and a clearly marked Streamlit deployment-pending link. It does not require a build step or any external API, analytics, tracking, or secrets.
+
+Serve it locally:
+```bash
+python -m http.server 8000
+# Visit http://127.0.0.1:8000
+```
+
+To publish it through GitHub Pages, open the repository **Settings → Pages**, set **Build and deployment** to **Deploy from a branch**, choose branch **`main`** and folder **`/(root)`**, then select **Save**. GitHub will publish the site at `https://anyeigrant-pixel.github.io/policyguard-portfolio-project/`. This is independent of the Streamlit dashboard; keep the dashboard URL labeled as deployment pending until Streamlit Community Cloud is provisioned.
+
 ## Modeling and interpretation
 All classifiers use a deterministic stratified 75/25 synthetic train/test split. The dashboard reports ROC-AUC, precision, recall, and F1 at a 0.50 threshold. Logistic-regression coefficients on standardized/transformed inputs are the explainability mechanism; positive coefficients raise modeled lapse odds and negative coefficients lower them. This is an interpretable equivalent where SHAP is not installed, avoiding an optional dependency that is not required for reproducible runtime.
 

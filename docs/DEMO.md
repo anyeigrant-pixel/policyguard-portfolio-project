@@ -2,6 +2,14 @@
 
 PolicyGuard demonstrates **synthetic-data-only** policy-lapse analytics. Begin on **Executive Overview** to frame the retention problem and show the portfolio’s synthetic composition.
 
+## Public portfolio landing page
+
+`index.html` is the static, responsive GitHub Pages landing site. It communicates the business proposition, validated synthetic results, capabilities, workflow, and responsible-use boundary before directing visitors to the source or the Streamlit dashboard. The Streamlit call-to-action is intentionally labeled **deployment pending** until a live app is provisioned.
+
+Preview the site with `python -m http.server 8000`, then browse to `http://127.0.0.1:8000`. To publish, enable GitHub Pages from the `main` branch at the repository root; see the README for the exact settings and expected Pages URL.
+
+## Interactive dashboard
+
 1. **Customer Risk** — choose a synthetic customer to compare structured, text, and combined lapse probabilities, modeled time-to-lapse, globally important structured drivers, and the service note.
 2. **Model Comparison** — contrast held-out ROC-AUC and F1 across structured-only, text-only, and combined models; call out the measured combined-model lift.
 3. **Retention Analytics** — explore premium changes, payment behavior, tenure, claims, service contacts, and bundling by observed synthetic lapse.
