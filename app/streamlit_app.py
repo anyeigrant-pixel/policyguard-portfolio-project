@@ -1,4 +1,5 @@
 import sys
+import importlib.util
 from pathlib import Path
 
 import streamlit as st
@@ -8,13 +9,24 @@ import plotly.io as pio
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
+SERVICE_PATH = ROOT / 'src' / 'services' / 'dashboard_service.py'
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+service_spec = importlib.util.spec_from_file_location('policyguard_dashboard_service', SERVICE_PATH)
+if service_spec is None or service_spec.loader is None:
+    raise RuntimeError(f'Unable to load dashboard service from {SERVICE_PATH}.')
+dashboard_service = importlib.util.module_from_spec(service_spec)
+service_spec.loader.exec_module(dashboard_service)
 
-from src.services.dashboard_service import (
-    ArtifactUnavailableError, claims_summary, drift_report, ensure_dashboard_artifacts, load_csv, load_data, load_json,
-    predict_customer, top_risk_drivers,
-)
+ArtifactUnavailableError = dashboard_service.ArtifactUnavailableError
+claims_summary = dashboard_service.claims_summary
+drift_report = dashboard_service.drift_report
+ensure_dashboard_artifacts = dashboard_service.ensure_dashboard_artifacts
+load_csv = dashboard_service.load_csv
+load_data = dashboard_service.load_data
+load_json = dashboard_service.load_json
+predict_customer = dashboard_service.predict_customer
+top_risk_drivers = dashboard_service.top_risk_drivers
 
 PINK_PALETTE = ['#D84A8C', '#A82B68', '#F08AB5', '#6E315D', '#F4B5CF', '#C75B8E']
 PLOTLY_THEME = go.layout.Template(pio.templates['plotly_white'])
