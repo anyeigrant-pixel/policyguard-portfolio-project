@@ -34,6 +34,12 @@ streamlit run app/streamlit_app.py --server.headless true --server.port 8501
 curl -fsS http://127.0.0.1:8501/_stcore/health
 ```
 
+## Streamlit Community Cloud deployment
+
+The application entry point is `app/streamlit_app.py`; Streamlit Cloud should deploy from the `main` branch with Python 3.12 (`runtime.txt`). The app has no secrets or external services. On its first start, it generates the ignored synthetic dataset and model artifacts inside the deployment filesystem, so generated files are deliberately not versioned.
+
+To deploy from a browser, select the repository, branch `main`, and the entry point above in the Streamlit Community Cloud deployment form. Do not configure secrets. The deployed app will be publicly accessible after its first synthetic-artifact bootstrap completes.
+
 ## Modeling and interpretation
 All classifiers use a deterministic stratified 75/25 synthetic train/test split. The dashboard reports ROC-AUC, precision, recall, and F1 at a 0.50 threshold. Logistic-regression coefficients on standardized/transformed inputs are the explainability mechanism; positive coefficients raise modeled lapse odds and negative coefficients lower them. This is an interpretable equivalent where SHAP is not installed, avoiding an optional dependency that is not required for reproducible runtime.
 
