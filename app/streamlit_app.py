@@ -3,6 +3,8 @@ from pathlib import Path
 
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,6 +15,17 @@ from src.services.dashboard_service import (
     ArtifactUnavailableError, drift_report, ensure_dashboard_artifacts, load_csv, load_data, load_json,
     predict_customer, top_risk_drivers,
 )
+
+PINK_PALETTE = ['#D84A8C', '#A82B68', '#F08AB5', '#6E315D', '#F4B5CF', '#C75B8E']
+PLOTLY_THEME = go.layout.Template(pio.templates['plotly_white'])
+PLOTLY_THEME.layout.colorway = PINK_PALETTE
+PLOTLY_THEME.layout.paper_bgcolor = '#FFF8FC'
+PLOTLY_THEME.layout.plot_bgcolor = '#FFF8FC'
+PLOTLY_THEME.layout.font = {'color': '#35152A'}
+PLOTLY_THEME.layout.xaxis = {'gridcolor': '#F1D7E4', 'linecolor': '#DFAEC8'}
+PLOTLY_THEME.layout.yaxis = {'gridcolor': '#F1D7E4', 'linecolor': '#DFAEC8'}
+px.defaults.template = PLOTLY_THEME
+px.defaults.color_discrete_sequence = PINK_PALETTE
 
 st.set_page_config(page_title='PolicyGuard | Retention Intelligence', page_icon='🛡️', layout='wide')
 st.markdown("""
