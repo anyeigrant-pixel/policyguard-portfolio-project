@@ -17,8 +17,23 @@ from src.services.dashboard_service import (
 st.set_page_config(page_title='PolicyGuard | Retention Intelligence', page_icon='🛡️', layout='wide')
 st.markdown("""
 <style>
+    .stApp {
+        background:
+            radial-gradient(circle at top right, rgba(244, 173, 207, 0.25), transparent 32rem),
+            #fff8fc;
+    }
     .block-container {padding-top: 2rem; max-width: 1400px;}
-    [data-testid="stMetric"] {background: #f6f8fb; border: 1px solid #e4e8ef; padding: 12px; border-radius: 10px;}
+    [data-testid="stMetric"] {
+        background: linear-gradient(135deg, #fff, #fff1f7);
+        border: 1px solid #f2c9dc;
+        padding: 12px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(129, 35, 82, 0.08);
+    }
+    [data-testid="stMetricLabel"] {color: #7a315b;}
+    [data-testid="stMetricValue"] {color: #9d285f;}
+    [data-testid="stSidebar"] {background: #fff1f7;}
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {color: #4d1937;}
 </style>
 """, unsafe_allow_html=True)
 st.title('PolicyGuard')
