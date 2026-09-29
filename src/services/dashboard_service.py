@@ -20,19 +20,24 @@ class ArtifactUnavailableError(RuntimeError):
 
 
 def ensure_dashboard_artifacts():
-    """Create synthetic dashboard inputs locally when a fresh deployment has none."""
-    retention_required = [
-        DATA_PATH,
+    """Create missing local runtime inputs without retraining available model artifacts."""
+    model_required = [
         ARTIFACT_DIR / 'metrics.json',
+        ARTIFACT_DIR / 'structured_churn_model.joblib',
+        ARTIFACT_DIR / 'text_churn_model.joblib',
+        ARTIFACT_DIR / 'combined_churn_model.joblib',
+        ARTIFACT_DIR / 'time_to_event_model.joblib',
         ARTIFACT_DIR / 'top_terms.csv',
         ARTIFACT_DIR / 'topics.csv',
     ]
-    if not all(path.exists() for path in retention_required):
+    if not DATA_PATH.exists():
         from src.data.generate_data import main as generate_data
+
+        generate_data()
+    if not all(path.exists() for path in model_required):
         from src.models.train_models import main as train_models
         from src.nlp.text_analytics import main as analyze_text
 
-        generate_data()
         train_models()
         analyze_text()
     if CLAIMS_PATH.exists() and not (ARTIFACT_DIR / 'claims_metrics.json').exists():

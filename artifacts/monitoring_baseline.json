@@ -1,0 +1,48 @@
+{
+  "numeric": {
+    "age": {
+      "mean": 47.7994,
+      "std": 15.799440555671179
+    },
+    "tenure_years": {
+      "mean": 9.10215,
+      "std": 5.111386015964791
+    },
+    "annual_premium": {
+      "mean": 1869.3225259999997,
+      "std": 545.8746729727609
+    },
+    "premium_change_pct": {
+      "mean": 6.07897,
+      "std": 8.03288674550106
+    },
+    "late_payments_12m": {
+      "mean": 0.7126,
+      "std": 0.8390897730068674
+    },
+    "claims_3y": {
+      "mean": 0.7888,
+      "std": 0.8903223165700938
+    },
+    "service_tickets_6m": {
+      "mean": 1.2095,
+      "std": 1.0939512891085663
+    },
+    "bundled_policies": {
+      "mean": 0.5731,
+      "std": 0.4946522597601355
+    },
+    "autopay": {
+      "mean": 0.6744,
+      "std": 0.4686220232341476
+    },
+    "paperless": {
+      "mean": 0.7389,
+      "std": 0.4392562857927714
+    }
+  },
+  "text": {
+    "mean_note_length": 101.7877,
+    "vocabulary_size": 94
+  }
+}
