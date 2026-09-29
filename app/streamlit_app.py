@@ -185,7 +185,36 @@ else:
         st.subheader('Feature-distribution monitoring')
         st.dataframe(report.style.format({'baseline_mean': '{:.2f}', 'current_mean': '{:.2f}', 'standardized_shift': '{:.3f}'}),
                      hide_index=True, use_container_width=True)
-        st.plotly_chart(px.bar(report, x='feature', y='standardized_shift', color='status',
-                               title='Structured and text feature drift against training baseline'), use_container_width=True)
+        status_colors = {'Stable': '#D84A8C', 'Review': '#6E315D'}
+        chart = go.Figure()
+        for status, subset in report.groupby('status', sort=False):
+            chart.add_trace(go.Bar(
+                x=subset['feature'],
+                y=subset['standardized_shift'],
+                name=status,
+                marker_color=status_colors.get(status, '#A82B68'),
+                hovertemplate=(
+                    '<b>%{x}</b><br>Standardized shift: %{y:.3f}'
+                    '<br>Status: ' + status + '<extra></extra>'
+                ),
+            ))
+            chart.add_trace(go.Scatter(
+                x=subset['feature'],
+                y=subset['standardized_shift'],
+                mode='markers',
+                showlegend=False,
+                marker={'size': 10, 'color': status_colors.get(status, '#A82B68'),
+                        'line': {'color': '#FFF8FC', 'width': 2}},
+                hoverinfo='skip',
+            ))
+        chart.add_hline(y=0.20, line_dash='dash', line_color='#6E315D',
+                        annotation_text='Review threshold: 0.20', annotation_position='top left')
+        chart.update_layout(
+            title='Structured and text feature drift against training baseline',
+            yaxis={'title': 'Standardized mean shift', 'range': [-0.015, max(0.25, report['standardized_shift'].max() * 1.25)]},
+            xaxis={'title': None, 'tickangle': -35},
+            legend_title_text='Status',
+        )
+        st.plotly_chart(chart, use_container_width=True)
         st.caption('Review is triggered at a 0.20 standardized mean shift. This synthetic demonstration uses a training-profile baseline; production monitoring should compare versioned live windows and include calibration checks.')
     artifact_page(monitoring)
