@@ -12,7 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.services.dashboard_service import (
-    ArtifactUnavailableError, drift_report, ensure_dashboard_artifacts, load_csv, load_data, load_json,
+    ArtifactUnavailableError, claims_summary, drift_report, ensure_dashboard_artifacts, load_csv, load_data, load_json,
     predict_customer, top_risk_drivers,
 )
 
@@ -79,7 +79,8 @@ with st.spinner('Preparing synthetic policy and model artifacts...'):
 
 df = required_data()
 pages = ['Executive Overview', 'Customer Risk', 'Model Comparison', 'Retention Analytics',
-         'Customer Segments', 'Text Analytics', 'Survival Analysis', 'Monitoring & Drift']
+         'Customer Segments', 'Text Analytics', 'Survival Analysis', 'Monitoring & Drift',
+         'Claims & Fraud Intelligence']
 page = st.sidebar.radio('Navigate', pages)
 
 if page == 'Executive Overview':
@@ -179,7 +180,7 @@ elif page == 'Survival Analysis':
         st.caption('The timing model is a random-forest regressor trained on observed synthetic lapse events; the curve summarizes observed retention. Censoring is not modeled beyond the event flag.')
     artifact_page(survival)
 
-else:
+elif page == 'Monitoring & Drift':
     def monitoring():
         report = drift_report(df)
         st.subheader('Feature-distribution monitoring')
@@ -218,3 +219,43 @@ else:
         st.plotly_chart(chart, use_container_width=True)
         st.caption('Review is triggered at a 0.20 standardized mean shift. This synthetic demonstration uses a training-profile baseline; production monitoring should compare versioned live windows and include calibration checks.')
     artifact_page(monitoring)
+
+else:
+    def claims_intelligence():
+        claims, metrics = claims_summary()
+        st.subheader('Claims & fraud intelligence')
+        st.caption(
+            'This separate module uses the user-provided claims dataset. '
+            'It is distinct from the synthetic policy-lapse analytics elsewhere in PolicyGuard.'
+        )
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric('Claims records', f"{metrics['records']:,}")
+        c2.metric('Flagged fraud rate', f"{metrics['positive_rate']:.1%}")
+        c3.metric('Fraud model ROC-AUC', f"{metrics['roc_auc']:.3f}")
+        c4.metric('Fraud model F1', f"{metrics['f1']:.3f}")
+        left, right = st.columns(2)
+        left.plotly_chart(
+            px.histogram(claims, x='Claim_Type', color='Fraud_Flag', barmode='group',
+                         title='Fraud flags by claim type'),
+            use_container_width=True,
+        )
+        right.plotly_chart(
+            px.box(claims, x='Fraud_Flag', y='Claim_Amount', color='Fraud_Flag',
+                   title='Claim amount by fraud flag'),
+            use_container_width=True,
+        )
+        st.subheader('Most influential non-leaking model features')
+        importance = load_csv('claims_feature_importance.csv').copy()
+        importance['feature'] = importance['feature'].str.replace(
+            'numeric__', '', regex=False
+        ).str.replace('categorical__', '', regex=False)
+        st.plotly_chart(
+            px.bar(importance.head(15).sort_values('coefficient'), x='coefficient', y='feature',
+                   orientation='h', title='Fraud classifier coefficient importance'),
+            use_container_width=True,
+        )
+        st.caption(
+            'The classifier intentionally excludes the supplied Fraud_Risk_Score and Claim_Status '
+            'to avoid target leakage. Feature coefficients are directional associations, not causal explanations.'
+        )
+    artifact_page(claims_intelligence)

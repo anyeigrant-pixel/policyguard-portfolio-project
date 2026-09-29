@@ -4,7 +4,7 @@ import pytest
 from src.data.generate_data import make_note
 from src.models.train_models import classification_metrics, km_curve
 from src.services.dashboard_service import (
-    ArtifactUnavailableError, drift_report, load_data, load_json, predict_customer,
+    ArtifactUnavailableError, claims_summary, drift_report, load_data, load_json, predict_customer,
 )
 
 def test_dataset_exists():
@@ -63,3 +63,9 @@ def test_inference_fails_explicitly_when_model_is_missing(monkeypatch, tmp_path)
     monkeypatch.setattr(service, 'ARTIFACT_DIR', tmp_path)
     with pytest.raises(ArtifactUnavailableError, match='complete training pipeline'):
         predict_customer(row)
+
+def test_claims_module_has_data_and_metrics():
+    claims, metrics = claims_summary()
+    assert len(claims) == 50000
+    assert {'Fraud_Flag', 'Claim_Amount', 'Fraud_Risk_Score'}.issubset(claims.columns)
+    assert 0 <= metrics['roc_auc'] <= 1

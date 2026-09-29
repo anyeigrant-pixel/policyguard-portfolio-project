@@ -1,0 +1,17 @@
+Column,Description
+Claim_ID,Claim_ID description
+Customer_ID,Customer_ID description
+Policy_Number,Policy_Number description
+Age,Age description
+Gender,Gender description
+Region,Region description
+Policy_Type,Policy_Type description
+Premium_Amount,Premium_Amount description
+Coverage_Amount,Coverage_Amount description
+Claim_Amount,Claim_Amount description
+Claim_Type,Claim_Type description
+Credit_Score,Credit_Score description
+Fraud_Risk_Score,Fraud_Risk_Score description
+Fraud_Flag,Fraud_Flag description
+Claim_Status,Claim_Status description
+Settlement_Amount,Settlement_Amount description

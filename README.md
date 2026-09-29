@@ -15,6 +15,7 @@ Insurers need to understand which policyholders are at elevated risk of non-rene
 - Streamlit workflows for customer risk, model comparison, retention levers, segments, NLP, survival, and feature/text drift
 - Explicit dashboard errors when data or model artifacts are unavailable
 - Automated preprocessing, modeling, inference, and dashboard-service tests
+- A separate user-provided claims/fraud intelligence module with a leakage-controlled held-out classifier
 
 ## Run
 ```bash
@@ -56,6 +57,10 @@ To publish it through GitHub Pages, open the repository **Settings → Pages**, 
 All classifiers use a deterministic stratified 75/25 synthetic train/test split. The dashboard reports ROC-AUC, precision, recall, and F1 at a 0.50 threshold. Logistic-regression coefficients on standardized/transformed inputs are the explainability mechanism; positive coefficients raise modeled lapse odds and negative coefficients lower them. This is an interpretable equivalent where SHAP is not installed, avoiding an optional dependency that is not required for reproducible runtime.
 
 The combined model concatenates imputed/scaled structured features, one-hot categories, and TF-IDF unigrams/bigrams. Its improvement is assessed against structured-only ROC-AUC on the held-out synthetic sample. Time-to-lapse MAE is measured only among observed synthetic lapse events, so it is not a full survival model.
+
+## Claims and fraud intelligence
+
+The **Claims & Fraud Intelligence** page is a separate workflow powered by the user-provided `data/claims/insurance_claims_dataset.csv` file. It analyzes 50,000 claim records and trains a held-out logistic classifier against `Fraud_Flag`. To avoid leakage, the classifier excludes the supplied `Fraud_Risk_Score`, `Claim_Status`, settlement amount, and record identifiers. This claims module does not alter or validate the synthetic lapse models; it adds a distinct insurance analytics use case.
 
 ## Operations and monitoring
 Training writes versionable artifacts to `artifacts/`: models, validation metrics, feature importances, NLP topics, segment profiles, and a numeric/text training baseline. The Monitoring & Drift page compares current mean structured features and mean note length to this baseline; a standardized mean shift of 0.20 or higher is marked for review. A production implementation would add versioned time windows, prediction/calibration monitoring, data-quality checks, alert routing, protected-class fairness review, and retraining approval controls.

@@ -17,5 +17,6 @@ Preview the site with `python -m http.server 8000`, then browse to `http://127.0
 5. **Text Analytics** — review common phrases, words/phrases predictive of synthetic lapse, and NMF service-note topics.
 6. **Survival Analysis** — show the Kaplan-Meier retention curve and the event-only time-to-lapse error.
 7. **Monitoring & Drift** — explain baseline-versus-current structured and service-text monitoring, including the review threshold.
+8. **Claims & Fraud Intelligence** — examine the user-provided claims dataset separately from the synthetic retention workflow, including fraud prevalence, claim characteristics, and a leakage-controlled baseline classifier.
 
 Key interview point: the project tests whether customer-service text contributes incremental predictive signal beyond structured policy data, while making the synthetic-data limitation prominent.

@@ -8,6 +8,7 @@ from scipy.sparse import csr_matrix, hstack
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_PATH = ROOT / 'data' / 'processed' / 'policyholders.csv'
+CLAIMS_PATH = ROOT / 'data' / 'claims' / 'insurance_claims_dataset.csv'
 ARTIFACT_DIR = ROOT / 'artifacts'
 FEATURES = ['age', 'tenure_years', 'annual_premium', 'premium_change_pct',
             'late_payments_12m', 'claims_3y', 'service_tickets_6m',
@@ -20,21 +21,23 @@ class ArtifactUnavailableError(RuntimeError):
 
 def ensure_dashboard_artifacts():
     """Create synthetic dashboard inputs locally when a fresh deployment has none."""
-    required = [
+    retention_required = [
         DATA_PATH,
         ARTIFACT_DIR / 'metrics.json',
         ARTIFACT_DIR / 'top_terms.csv',
         ARTIFACT_DIR / 'topics.csv',
     ]
-    if all(path.exists() for path in required):
-        return
-    from src.data.generate_data import main as generate_data
-    from src.models.train_models import main as train_models
-    from src.nlp.text_analytics import main as analyze_text
+    if not all(path.exists() for path in retention_required):
+        from src.data.generate_data import main as generate_data
+        from src.models.train_models import main as train_models
+        from src.nlp.text_analytics import main as analyze_text
 
-    generate_data()
-    train_models()
-    analyze_text()
+        generate_data()
+        train_models()
+        analyze_text()
+    if CLAIMS_PATH.exists() and not (ARTIFACT_DIR / 'claims_metrics.json').exists():
+        from src.claims.train_claims import train_claims_model
+        train_claims_model()
 
 
 def require_artifact(name):
@@ -117,3 +120,17 @@ def drift_report(current):
                  'current_mean': mean_note_length, 'standardized_shift': text_shift,
                  'status': 'Review' if text_shift >= .2 else 'Stable'})
     return pd.DataFrame(rows)
+
+
+def load_claims_data():
+    if not CLAIMS_PATH.exists():
+        raise ArtifactUnavailableError(
+            'User-provided claims data is unavailable. Add data/claims/insurance_claims_dataset.csv first.'
+        )
+    return pd.read_csv(CLAIMS_PATH)
+
+
+def claims_summary():
+    claims = load_claims_data()
+    metrics = load_json('claims_metrics.json')
+    return claims, metrics
