@@ -1,6 +1,13 @@
+import sys
+from pathlib import Path
+
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from src.services.dashboard_service import (
     ArtifactUnavailableError, drift_report, ensure_dashboard_artifacts, load_csv, load_data, load_json,
