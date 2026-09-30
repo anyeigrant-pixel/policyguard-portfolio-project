@@ -62,7 +62,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 st.title('PolicyGuard')
-st.caption('Insurance lapse intelligence built exclusively with synthetic policyholder data — not for production underwriting or customer decisions.')
+st.caption('Insurance lapse intelligence for portfolio demonstration — not for production underwriting or customer decisions.')
 
 
 def required_data():
@@ -82,11 +82,11 @@ def artifact_page(action):
         st.error(f'Unable to display this analysis. Verify pipeline artifacts and rerun training. Detail: {error}')
 
 
-with st.spinner('Preparing synthetic policy and model artifacts...'):
+with st.spinner('Preparing policy and model artifacts...'):
     try:
         ensure_dashboard_artifacts()
     except (OSError, ValueError) as error:
-        st.error(f'Unable to prepare synthetic dashboard artifacts: {error}')
+        st.error(f'Unable to prepare dashboard artifacts: {error}')
         st.stop()
 
 df = required_data()
@@ -97,7 +97,7 @@ page = st.sidebar.radio('Navigate', pages)
 
 if page == 'Executive Overview':
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric('Synthetic policies', f'{len(df):,}')
+    c1.metric('Policies', f'{len(df):,}')
     c2.metric('Observed lapse', f'{df.churned.mean():.1%}')
     c3.metric('Average premium', f'${df.annual_premium.mean():,.0f}')
     c4.metric('Autopay adoption', f'{df.autopay.mean():.1%}')
@@ -105,11 +105,11 @@ if page == 'Executive Overview':
     st.plotly_chart(px.histogram(df, x='premium_change_pct', color='churned', barmode='overlay',
                                  labels={'churned': 'Lapsed'}, title='Premium change versus observed lapse'),
                     use_container_width=True)
-    st.info('Use this portfolio demonstration to explore patterns and model behavior. All records and labels are synthetic.')
+    st.info('Use this portfolio demonstration to explore patterns and model behavior. It is not intended for production decisions.')
 
 elif page == 'Customer Risk':
     def customer_risk():
-        customer_id = st.selectbox('Synthetic customer ID', df.customer_id)
+        customer_id = st.selectbox('Customer ID', df.customer_id)
         row = df.loc[df.customer_id.eq(customer_id)].iloc[[0]]
         result = predict_customer(row)
         c1, c2, c3 = st.columns(3)
@@ -139,7 +139,7 @@ elif page == 'Model Comparison':
         st.plotly_chart(px.bar(comparison, x='Model', y=['roc_auc', 'f1'], barmode='group',
                                title='ROC-AUC and F1 by modeling approach'), use_container_width=True)
         lift = metrics['combined']['roc_auc'] - metrics['structured']['roc_auc']
-        st.success(f"Adding service-note NLP {'improves' if lift > 0 else 'does not improve'} ROC-AUC by {lift:+.3f} on the held-out synthetic test set.")
+        st.success(f"Adding service-note NLP {'improves' if lift > 0 else 'does not improve'} ROC-AUC by {lift:+.3f} on the held-out test set.")
     artifact_page(model_comparison)
 
 elif page == 'Retention Analytics':
@@ -165,7 +165,7 @@ elif page == 'Customer Segments':
         st.plotly_chart(px.scatter(profile, x='avg_tenure_years', y='avg_premium_change_pct', size='customers',
                                    color='segment_name', hover_data=['lapse_rate', 'avg_late_payments'],
                                    title='Segment positioning'), use_container_width=True)
-        st.caption('Segments use standardized structured behavioral and policy features. Names are analyst-friendly descriptions of the synthetic cluster profiles.')
+        st.caption('Segments use standardized structured behavioral and policy features. Names are analyst-friendly descriptions of the cluster profiles.')
     artifact_page(segments)
 
 elif page == 'Text Analytics':
@@ -189,7 +189,7 @@ elif page == 'Survival Analysis':
         st.metric('Time-to-lapse MAE', f"{metrics['time_to_event']['mae_months']:.2f} months")
         st.plotly_chart(px.line(km, x='time_months', y='survival_probability',
                                 title='Kaplan-Meier retention curve'), use_container_width=True)
-        st.caption('The timing model is a random-forest regressor trained on observed synthetic lapse events; the curve summarizes observed retention. Censoring is not modeled beyond the event flag.')
+        st.caption('The timing model is a random-forest regressor trained on observed lapse events; the curve summarizes observed retention. Censoring is not modeled beyond the event flag.')
     artifact_page(survival)
 
 elif page == 'Monitoring & Drift':
@@ -229,7 +229,7 @@ elif page == 'Monitoring & Drift':
             legend_title_text='Status',
         )
         st.plotly_chart(chart, use_container_width=True)
-        st.caption('Review is triggered at a 0.20 standardized mean shift. This synthetic demonstration uses a training-profile baseline; production monitoring should compare versioned live windows and include calibration checks.')
+        st.caption('Review is triggered at a 0.20 standardized mean shift. This demonstration uses a training-profile baseline; production monitoring should compare versioned live windows and include calibration checks.')
     artifact_page(monitoring)
 
 else:
@@ -238,7 +238,7 @@ else:
         st.subheader('Claims & fraud intelligence')
         st.caption(
             'This separate module uses the user-provided claims dataset. '
-            'It is distinct from the synthetic policy-lapse analytics elsewhere in PolicyGuard.'
+            'It is distinct from the policy-lapse analytics elsewhere in PolicyGuard.'
         )
         c1, c2, c3, c4 = st.columns(4)
         c1.metric('Claims records', f"{metrics['records']:,}")
