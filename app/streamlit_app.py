@@ -62,7 +62,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 st.title('PolicyGuard')
-st.caption('Insurance lapse intelligence for portfolio demonstration.')
+st.caption('Insurance lapse intelligence.')
 
 
 def required_data():
