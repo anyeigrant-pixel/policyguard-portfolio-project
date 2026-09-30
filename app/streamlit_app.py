@@ -105,7 +105,6 @@ if page == 'Executive Overview':
     st.plotly_chart(px.histogram(df, x='premium_change_pct', color='churned', barmode='overlay',
                                  labels={'churned': 'Lapsed'}, title='Premium change versus observed lapse'),
                     use_container_width=True)
-    st.info('Use this portfolio demonstration to explore patterns and model behavior. It is not intended for production decisions.')
 
 elif page == 'Customer Risk':
     def customer_risk():
