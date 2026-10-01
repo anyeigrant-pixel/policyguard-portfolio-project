@@ -227,7 +227,7 @@ elif page == 'Monitoring & Drift':
             legend_title_text='Status',
         )
         st.plotly_chart(chart, use_container_width=True)
-        st.caption('Review is triggered at a 0.20 standardized mean shift. This demonstration uses a training-profile baseline; production monitoring should compare versioned live windows and include calibration checks.')
+        st.caption('Review is triggered at a 0.20 standardized mean shift.')
     artifact_page(monitoring)
 
 else:
