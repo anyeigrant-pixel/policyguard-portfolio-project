@@ -164,7 +164,7 @@ elif page == 'Customer Segments':
         st.plotly_chart(px.scatter(profile, x='avg_tenure_years', y='avg_premium_change_pct', size='customers',
                                    color='segment_name', hover_data=['lapse_rate', 'avg_late_payments'],
                                    title='Segment positioning'), use_container_width=True)
-        st.caption('Segments use standardized structured behavioral and policy features. Names are analyst-friendly descriptions of the cluster profiles.')
+        st.caption('Segments use standardized structured behavioral and policy features.')
     artifact_page(segments)
 
 elif page == 'Text Analytics':
@@ -188,7 +188,6 @@ elif page == 'Survival Analysis':
         st.metric('Time-to-lapse MAE', f"{metrics['time_to_event']['mae_months']:.2f} months")
         st.plotly_chart(px.line(km, x='time_months', y='survival_probability',
                                 title='Kaplan-Meier retention curve'), use_container_width=True)
-        st.caption('The timing model is a random-forest regressor trained on observed lapse events; the curve summarizes observed retention. Censoring is not modeled beyond the event flag.')
     artifact_page(survival)
 
 elif page == 'Monitoring & Drift':
@@ -235,10 +234,7 @@ else:
     def claims_intelligence():
         claims, metrics = claims_summary()
         st.subheader('Claims & fraud intelligence')
-        st.caption(
-            'This separate module uses the user-provided claims dataset. '
-            'It is distinct from the policy-lapse analytics elsewhere in PolicyGuard.'
-        )
+        st.caption('This separate module uses the user-provided claims dataset.')
         c1, c2, c3, c4 = st.columns(4)
         c1.metric('Claims records', f"{metrics['records']:,}")
         c2.metric('Flagged fraud rate', f"{metrics['positive_rate']:.1%}")
@@ -265,8 +261,5 @@ else:
                    orientation='h', title='Fraud classifier coefficient importance'),
             use_container_width=True,
         )
-        st.caption(
-            'The classifier intentionally excludes the supplied Fraud_Risk_Score and Claim_Status '
-            'to avoid target leakage. Feature coefficients are directional associations, not causal explanations.'
-        )
+        st.caption('The classifier intentionally excludes the supplied Fraud_Risk_Score and Claim_Status to avoid target leakage.')
     artifact_page(claims_intelligence)
