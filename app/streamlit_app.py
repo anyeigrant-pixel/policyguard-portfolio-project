@@ -121,7 +121,7 @@ elif page == 'Customer Risk':
         st.dataframe(drivers[['driver', 'direction']], hide_index=True, use_container_width=True)
         st.subheader('Relevant service interaction')
         st.write(row.service_note.iloc[0])
-        st.caption(f"NLP lapse signal: {result['text_probability']:.1%}. The driver list reflects global logistic-model coefficients; it is an interpretable coefficient-based alternative to SHAP.")
+        st.caption(f"NLP lapse signal: {result['text_probability']:.1%}. The driver list reflects global logistic-model coefficients.")
     artifact_page(customer_risk)
 
 elif page == 'Model Comparison':
